@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { getAllProducts } from "../../api";
 import Input from "../../components/Input/Input";
@@ -7,6 +7,9 @@ const Products = () => {
   const [limit, setLimit] = useState(10);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  const [page, setPage] = useState(1);
+  const [numberOfPages, setNumberOfPages] = useState(null);
+  const [optionsArray, setOptionsArray] = useState([]);
 
   const { currentUser } = JSON.parse(localStorage.getItem("user"));
   const { data, error, isError, isFetching, isFetched, isLoading, isSuccess } =
@@ -40,14 +43,26 @@ const Products = () => {
     return uniqueProductsMap.values;
   }, [data?.products]);
 
-  console.log(filteredData);
-  console.log(
-    filteredData?.filter((item) => {
-      const regex = new RegExp(`.*${name}\\w+`);
-      var matchesRegex = regex.test(item.name);
-      return matchesRegex;
-    })
-  );
+  useEffect(() => {
+    setNumberOfPages(filteredData?.length / limit);
+  }, [filteredData?.length, limit]);
+  useEffect(() => {
+    setOptionsArray((prevState) => {
+      const array = [];
+      for (let i = 1; i <= numberOfPages; i++) {
+        array.push(
+          <option key={i} value={i}>
+            {i}
+          </option>
+        );
+      }
+      return array;
+    });
+  }, [numberOfPages]);
+
+  console.log("filtereddata:", filteredData);
+  console.log("number of pages", numberOfPages);
+  console.log(optionsArray);
 
   console.log(name, price);
 
@@ -79,13 +94,16 @@ const Products = () => {
           </thead>
           <tbody>
             {filteredData
-              ?.filter((item) => {
+              ?.filter((item, index) => {
                 const regex = new RegExp(`.*${name}.+|${name}`);
                 var matchesRegexName = regex.test(item.name);
                 const regex2 = new RegExp(`^${price}.+|^${price}$`);
                 var matchesRegexPrice = regex2.test(item.price);
                 console.log(matchesRegexPrice);
                 return matchesRegexName && matchesRegexPrice;
+              })
+              .filter((item, index, array) => {
+                return index < limit;
               })
               .map((product, index) => (
                 <tr key={product.id}>
@@ -96,12 +114,15 @@ const Products = () => {
               ))}
           </tbody>
         </table>
-
-        <select onChange={(e) => setLimit(e.target.value)}>
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="50">50</option>
-        </select>
+        <div className="flex justify-between">
+          <select onChange={(e) => setLimit(e.target.value)}>
+            <option value="10">10</option>
+            <option value="20">20</option>
+          </select>
+          <select onChange={(e) => setPage(e.target.value)}>
+            {optionsArray}
+          </select>
+        </div>
       </div>
     </div>
   );
