@@ -13,19 +13,20 @@ const CustomRoutes = () => {
   return (
     <>
       <Routes>
-        <Route path="/" element={<UserPrivateRoute />}>
-          <Route path="/" element={<Products />} />
-        </Route>
-        <Route path="/pocetna" element={<UserPrivateRoute />}>
-          <Route path="/pocetna" element={<Pocetna />} />
+        <Route path="/products" element={<UserPrivateRoute />}>
+          <Route path="/products" element={<Products />} />
         </Route>
         <Route
+          path="/"
+          element={user.currentUser ? <Navigate to="/products" /> : <Pocetna />}
+        />
+        <Route
           path="/register"
-          element={user.currentUser ? <Navigate to="/" /> : <Signup />}
+          element={user.currentUser ? <Navigate to="/products" /> : <Signup />}
         />
         <Route
           path="/login"
-          element={user.currentUser ? <Navigate to="/" /> : <Login />}
+          element={user.currentUser ? <Navigate to="/products" /> : <Login />}
         />
         <Route path="*" element={<div>ERROR 404 Page not Found</div>} />
       </Routes>

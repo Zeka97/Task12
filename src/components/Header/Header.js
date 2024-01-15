@@ -16,7 +16,7 @@ const Header = () => {
   };
   return (
     <div className="py-4 flex justify-between items-center px-12 border-b w-full">
-      <Button>Pocetna</Button>
+      <Button onClick={() => navigate("/")}>Pocetna</Button>
       <img src="./monetizelogo.png" alt="logo" className="h-[20px] w-[140px]" />
       {!state.currentUser ? (
         <Button dark onClick={() => navigate("/login")}>

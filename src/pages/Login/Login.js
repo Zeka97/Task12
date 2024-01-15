@@ -7,10 +7,13 @@ import { login } from "../../api";
 import { useMutation } from "react-query";
 
 import { isExpired, decodeToken } from "react-jwt";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [user, setUser] = useState({ username: null, password: null });
+  const [error, setError] = useState(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { mutate } = useMutation((params) => login(params));
 
@@ -33,6 +36,9 @@ const Login = () => {
         },
         onError: (error) => {
           console.log(error);
+          if (error.response.status === 401)
+            setError("User ne postoji/netacni podaci!");
+          else setError(error?.response?.data?.message);
         },
       }
     );
@@ -80,8 +86,10 @@ const Login = () => {
             name={"password"}
             onChange={handlePasswordChange}
           />
+          {error && <span className="text-red-500">{error}</span>}
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-4">
+          <Button onClick={() => navigate("/register")}>Sign Up</Button>
           <Button type="submit" dark>
             Log In
           </Button>

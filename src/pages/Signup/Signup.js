@@ -24,9 +24,10 @@ const Signup = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (user.password !== user.repeatPassword)
-      alert("Password doesnt match repeat password");
-    else {
+    if (user.password !== user.repeatPassword) {
+      alert("Password doesn't match repeat password");
+      setError("Password doesn't match repeat password");
+    } else {
       console.log(user);
       mutate(user, {
         onSuccess: (data) => {
@@ -133,8 +134,8 @@ const Signup = () => {
             />
             <span>By checking u will subscribe</span>
           </div>
-          <div className="flex">
-            <h3>Gender</h3>
+          <div className="flex gap-[16px]">
+            <h3 className="w-[82px] font-bold">Gender</h3>
             <input
               type="radio"
               name="gender"
@@ -170,11 +171,12 @@ const Signup = () => {
             />
             <label>Other</label>
           </div>
-          <div className="flex">
-            <label>Status</label>
+          <div className="flex gap-[16px]">
+            <label className="font-bold w-[82px]">Status</label>
 
             <select
               name="status"
+              className="border rounded-[4px]"
               onChange={(e) =>
                 setUser((prevState) => {
                   return { ...prevState, status: e.target.value };
@@ -199,7 +201,7 @@ const Signup = () => {
           max="2024"
           required
         />
-        {error && <span>{error}</span>}
+        {error && <span className="text-red-500">{error}</span>}
         <div className="flex justify-end">
           <Button type="submit" dark>
             Sign up

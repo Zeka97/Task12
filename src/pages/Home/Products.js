@@ -10,6 +10,7 @@ const Products = () => {
   const [page, setPage] = useState(1);
   const [numberOfPages, setNumberOfPages] = useState(null);
   const [optionsArray, setOptionsArray] = useState([]);
+  const [products, setProducts] = useState([]);
 
   const { currentUser } = JSON.parse(localStorage.getItem("user"));
   const { data, error, isError, isFetching, isFetched, isLoading, isSuccess } =
@@ -40,14 +41,15 @@ const Products = () => {
         { keys: [], values: [] }
       );
 
+    setProducts(uniqueProductsMap.values);
     return uniqueProductsMap.values;
   }, [data?.products]);
 
   useEffect(() => {
-    setNumberOfPages(filteredData?.length / limit);
-  }, [filteredData?.length, limit]);
+    setNumberOfPages(Math.ceil(products?.length / limit));
+  }, [products?.length, limit]);
   useEffect(() => {
-    setOptionsArray((prevState) => {
+    setOptionsArray(() => {
       const array = [];
       for (let i = 1; i <= numberOfPages; i++) {
         array.push(
@@ -60,15 +62,31 @@ const Products = () => {
     });
   }, [numberOfPages]);
 
-  console.log("filtereddata:", filteredData);
+  useEffect(() => {
+    setProducts(
+      filteredData?.filter((item, index) => {
+        const regex = new RegExp(`.*${name}.+|${name}`);
+        var matchesRegexName = regex.test(item.name);
+        const regex2 = new RegExp(`^${price}.+|^${price}$`);
+        var matchesRegexPrice = regex2.test(item.price);
+        console.log(matchesRegexPrice);
+        return (
+          matchesRegexName && matchesRegexPrice && index > (page - 1) * limit
+        );
+      })
+    );
+  }, [name, price]);
+
+  console.log("filtereddata:", products);
   console.log("number of pages", numberOfPages);
   console.log(optionsArray);
+  console.log("page", page);
 
   console.log(name, price);
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      <div className="flex justify-around">
+    <div className="flex flex-col justify-center items-center min-h-screen pt-8 pb-8">
+      <div className="flex justify-around gap-8">
         <Input
           label="Name"
           type="text"
@@ -82,7 +100,7 @@ const Products = () => {
           onChange={(e) => setPrice(e)}
         />
       </div>
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-4 flex flex-col gap-4">
         <h2 className="text-2xl font-bold mb-4">Product Table</h2>
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
@@ -100,7 +118,11 @@ const Products = () => {
                 const regex2 = new RegExp(`^${price}.+|^${price}$`);
                 var matchesRegexPrice = regex2.test(item.price);
                 console.log(matchesRegexPrice);
-                return matchesRegexName && matchesRegexPrice;
+                return (
+                  matchesRegexName &&
+                  matchesRegexPrice &&
+                  index > (page - 1) * limit
+                );
               })
               .filter((item, index, array) => {
                 return index < limit;
@@ -115,13 +137,25 @@ const Products = () => {
           </tbody>
         </table>
         <div className="flex justify-between">
-          <select onChange={(e) => setLimit(e.target.value)}>
-            <option value="10">10</option>
-            <option value="20">20</option>
-          </select>
-          <select onChange={(e) => setPage(e.target.value)}>
-            {optionsArray}
-          </select>
+          <div className="flex gap-2">
+            <select
+              className="border border-gray"
+              onChange={(e) => setLimit(e.target.value)}
+            >
+              <option value="10">10</option>
+              <option value="20">20</option>
+            </select>
+            <span className="font-bold">Limit</span>
+          </div>
+          <div className="flex gap-2">
+            <select
+              onChange={(e) => setPage(e.target.value)}
+              className="border border-gray"
+            >
+              {optionsArray}
+            </select>
+            <span className="font-bold">Page</span>
+          </div>
         </div>
       </div>
     </div>
