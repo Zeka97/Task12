@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { userLogin } from "../../redux/actions/user.action";
 import { login } from "../../api";
 import { useMutation } from "react-query";
 
-import { isExpired, decodeToken } from "react-jwt";
+import { decodeToken } from "react-jwt";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -24,7 +24,7 @@ const Login = () => {
       {
         onSuccess: (data) => {
           const decodedToken = decodeToken(data.jwt);
-          console.log(decodedToken);
+
           dispatch(userLogin(decodedToken));
           localStorage.setItem(
             "user",
@@ -35,7 +35,6 @@ const Login = () => {
           );
         },
         onError: (error) => {
-          console.log(error);
           if (error.response.status === 401)
             setError("User ne postoji/netacni podaci!");
           else setError(error?.response?.data?.message);

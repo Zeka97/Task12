@@ -129,9 +129,15 @@ const Products = () => {
               })
               .map((product, index) => (
                 <tr key={product.id}>
-                  <td className="py-2 px-4 border-b">{product.id}</td>
-                  <td className="py-2 px-4 border-b">{product.name}</td>
-                  <td className="py-2 px-4 border-b">{product.price}</td>
+                  <td className="py-2 px-4 border-b text-center">
+                    {product.id}
+                  </td>
+                  <td className="py-2 px-4 border-b text-center">
+                    {product.name}
+                  </td>
+                  <td className="py-2 px-4 border-b text-center">
+                    {product.price}
+                  </td>
                 </tr>
               ))}
           </tbody>

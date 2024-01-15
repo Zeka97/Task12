@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
-import { useDispatch, useSelector } from "react-redux";
-import { userLogin } from "../../redux/actions/user.action";
-import { login, signup } from "../../api";
+import { signup } from "../../api";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -28,14 +26,12 @@ const Signup = () => {
       alert("Password doesn't match repeat password");
       setError("Password doesn't match repeat password");
     } else {
-      console.log(user);
       mutate(user, {
         onSuccess: (data) => {
           alert("succesfully registered");
           return navigate("/login");
         },
         onError: (error) => {
-          console.log(error);
           setError(error.response?.data?.message);
         },
       });
@@ -176,7 +172,7 @@ const Signup = () => {
 
             <select
               name="status"
-              className="border rounded-[4px]"
+              className="border rounded-[8px] py-2 px-4"
               onChange={(e) =>
                 setUser((prevState) => {
                   return { ...prevState, status: e.target.value };
@@ -191,16 +187,16 @@ const Signup = () => {
               <option value="inactive">Inactive</option>
             </select>
           </div>
+          <Input
+            label="Year of birth"
+            name="birth"
+            type="number"
+            onChange={handleBirthChange}
+            min="1900"
+            max="2024"
+            required
+          />
         </div>
-        <Input
-          label="Year of birth"
-          name="birth"
-          type="number"
-          onChange={handleBirthChange}
-          min="1900"
-          max="2024"
-          required
-        />
         {error && <span className="text-red-500">{error}</span>}
         <div className="flex justify-end">
           <Button type="submit" dark>
